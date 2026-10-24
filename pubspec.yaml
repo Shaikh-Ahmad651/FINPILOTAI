@@ -1,0 +1,35 @@
+name: finpilot_ai
+description: "Local-first personal finance tracking, budgeting, and bill reminders."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  sqflite: ^2.4.5
+  path: ^1.9.1
+  path_provider: ^2.1.6
+  sqflite_common_ffi_web: ^1.2.0
+  sqflite_common_ffi: ^2.4.5
+  flutter_local_notifications: ^22.3.2
+  timezone: ^0.11.2
+  flutter_timezone: ^5.1.1
+  image_picker: ^1.2.4
+  google_mlkit_text_recognition: ^0.17.1
+  cross_file: ^0.3.5+5
+  share_plus: ^13.3.1
+  local_auth: ^2.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
