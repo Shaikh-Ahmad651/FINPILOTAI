@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/widgets/home_action_button.dart';
+
 import '../../../../app/app_theme.dart';
 import '../../../../app/router.dart';
 import '../../../../core/widgets/app_card.dart';
@@ -22,7 +24,8 @@ class MoneyScreen extends StatelessWidget {
           onPressed: () => Navigator.pushNamed(context, AppRoutes.accounts),
           icon: const Icon(Icons.account_balance_wallet_outlined),
         ),
-      ],
+      
+        const HomeActionButton(),],
     ),
     body: AnimatedBuilder(
       animation: controller,

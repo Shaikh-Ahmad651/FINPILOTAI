@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../core/widgets/home_action_button.dart';
+
 import '../../../../app/app_theme.dart';
 import '../../../../app/router.dart';
 import '../../../../core/widgets/app_card.dart';
@@ -76,7 +78,8 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Settings')),
+    appBar: AppBar(
+      actions: const [HomeActionButton()],title: const Text('Settings')),
     body: AnimatedBuilder(
       animation: controller,
       builder: (context, _) => ListView(
@@ -145,19 +148,7 @@ class SettingsScreen extends StatelessWidget {
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => Navigator.pushNamed(context, AppRoutes.bills),
                 ),
-                SwitchListTile.adaptive(
-                  contentPadding: EdgeInsets.zero,
-                  secondary: const Icon(
-                    Icons.psychology_outlined,
-                    color: AppColors.muted,
-                  ),
-                  title: const Text('On-device language model'),
-                  subtitle: const Text(
-                    'Unavailable and disabled: no model runtime or model is installed. The Advisor uses its deterministic local fallback. No model is downloaded automatically.',
-                  ),
-                  value: false,
-                  onChanged: null,
-                ),
+                
                 SwitchListTile.adaptive(
                   contentPadding: EdgeInsets.zero,
                   secondary: const Icon(

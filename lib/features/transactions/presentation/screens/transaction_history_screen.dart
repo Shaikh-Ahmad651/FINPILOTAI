@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/widgets/home_action_button.dart';
+
 import '../../../../app/app_theme.dart';
 import '../../../../app/router.dart';
 import '../../../../core/widgets/app_card.dart';
@@ -62,7 +64,8 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
             },
             icon: const Icon(Icons.add),
           ),
-        ],
+        
+        const HomeActionButton(),],
       ),
       body: widget.controller.isLoading
           ? const Center(child: CircularProgressIndicator())
