@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/widgets/home_action_button.dart';
+
 import '../../../app/app_theme.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../advisor/domain/advisor_conversation_store.dart';
@@ -22,6 +24,7 @@ class MainShell extends StatefulWidget {
 }
 
 class MainShellState extends State<MainShell> {
+  static final GlobalKey<MainShellState> globalKey = GlobalKey<MainShellState>();
   int _selectedIndex = 0;
 
   final AdvisorConversationStore _advisorConversation =
@@ -127,7 +130,8 @@ class FeaturePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(title)),
+    appBar: AppBar(title: Text(title)
+    actions: const [HomeActionButton()],),
     body: SafeArea(
       child: ListView(
         padding: const EdgeInsets.all(20),

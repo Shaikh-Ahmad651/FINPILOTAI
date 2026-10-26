@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/widgets/home_action_button.dart';
+
 import '../../../../app/app_theme.dart';
 import '../../../../core/utils/money_parser.dart';
 import '../../../../data/models/finance_models.dart';
@@ -125,7 +127,8 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
       title: Text(_existing == null ? 'Add transaction' : 'Edit transaction'),
-    ),
+    
+    actions: const [HomeActionButton()],),
     body: SafeArea(
       child: Form(
         key: _formKey,

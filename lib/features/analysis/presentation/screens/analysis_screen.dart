@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/widgets/home_action_button.dart';
+
 import '../../../../app/app_theme.dart';
 import '../../../../app/router.dart';
 import '../../../../core/widgets/app_card.dart';
@@ -68,7 +70,8 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
           onPressed: _openBudgets,
           icon: const Icon(Icons.savings_outlined),
         ),
-      ],
+      
+        const HomeActionButton(),],
     ),
     body: AnimatedBuilder(
       animation: widget.controller,

@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+import '../../../../core/widgets/home_action_button.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../app/app_theme.dart';
@@ -164,7 +166,8 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Privacy and data')),
+    appBar: AppBar(title: const Text('Privacy and data')
+    actions: const [HomeActionButton()],),
     body: ListView(
       padding: const EdgeInsets.all(20),
       children: [

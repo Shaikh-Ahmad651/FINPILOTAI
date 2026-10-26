@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+import '../../../../core/widgets/home_action_button.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../app/app_theme.dart';
@@ -115,7 +117,8 @@ class _ReceiptScanScreenState extends State<ReceiptScanScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Scan receipt')),
+    appBar: AppBar(title: const Text('Scan receipt')
+    actions: const [HomeActionButton()],),
     body: ListView(
       padding: const EdgeInsets.all(20),
       children: [

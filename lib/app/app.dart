@@ -123,7 +123,7 @@ class _FinPilotAppState extends State<FinPilotApp>
       routes: {
         AppRoutes.login: (_) => LoginScreen(controller: controller),
         AppRoutes.register: (_) => RegisterScreen(controller: controller),
-        AppRoutes.home: (_) => MainShell(controller: controller),
+        AppRoutes.home: (_) => MainShell(controller: controller, key: MainShellState.globalKey),
       },
     );
   }

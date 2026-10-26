@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/widgets/home_action_button.dart';
+
 import '../../../../app/app_theme.dart';
 import '../../../../core/utils/money_parser.dart';
 import '../../../../data/models/finance_models.dart';
@@ -95,7 +97,8 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Review receipt')),
+    appBar: AppBar(title: const Text('Review receipt')
+    actions: const [HomeActionButton()],),
     bottomNavigationBar: SafeArea(
       minimum: const EdgeInsets.fromLTRB(20, 10, 20, 14),
       child: FilledButton(

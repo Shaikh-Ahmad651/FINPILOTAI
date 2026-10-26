@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/widgets/home_action_button.dart';
+
 import '../../../../app/app_theme.dart';
 import '../../../../core/utils/money_parser.dart';
 import '../../../../core/widgets/app_card.dart';
@@ -302,7 +304,8 @@ class _BillsScreenState extends State<BillsScreen> {
           onPressed: () => _editBill(),
           icon: const Icon(Icons.add),
         ),
-      ],
+      
+        const HomeActionButton(),],
     ),
     body: AnimatedBuilder(
       animation: widget.controller,

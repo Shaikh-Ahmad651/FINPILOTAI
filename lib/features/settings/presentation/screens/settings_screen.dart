@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../core/widgets/home_action_button.dart';
+
 import '../../../../app/app_theme.dart';
 import '../../../../app/router.dart';
 import '../../../../core/widgets/app_card.dart';
@@ -76,7 +78,8 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Settings')),
+    appBar: AppBar(title: const Text('Settings')
+    actions: const [HomeActionButton()],),
     body: AnimatedBuilder(
       animation: controller,
       builder: (context, _) => ListView(

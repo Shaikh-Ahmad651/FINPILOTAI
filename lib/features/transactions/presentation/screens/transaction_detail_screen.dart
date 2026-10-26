@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/widgets/home_action_button.dart';
+
 import '../../../../app/app_theme.dart';
 import '../../../../app/router.dart';
 import '../../../../core/widgets/app_card.dart';
@@ -19,7 +21,8 @@ class TransactionDetailScreen extends StatelessWidget {
     final transaction = controller.transactionById(transactionId);
     if (transaction == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Transaction')),
+        appBar: AppBar(title: const Text('Transaction')
+    actions: const [HomeActionButton()],),
         body: const Center(
           child: Text('This transaction is no longer available.'),
         ),
@@ -51,7 +54,8 @@ class TransactionDetailScreen extends StatelessWidget {
             onPressed: () => _confirmDelete(context),
             icon: const Icon(Icons.delete_outline),
           ),
-        ],
+        
+        const HomeActionButton(),],
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),
