@@ -126,9 +126,9 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
+      actions: const [HomeActionButton()],
       title: Text(_existing == null ? 'Add transaction' : 'Edit transaction'),
-    
-    actions: const [HomeActionButton()],),
+    ),
     body: SafeArea(
       child: Form(
         key: _formKey,

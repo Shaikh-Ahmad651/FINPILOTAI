@@ -166,8 +166,8 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Privacy and data')
-    actions: const [HomeActionButton()],),
+    appBar: AppBar(
+      actions: const [HomeActionButton()],title: const Text('Privacy and data')),
     body: ListView(
       padding: const EdgeInsets.all(20),
       children: [

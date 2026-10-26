@@ -21,8 +21,8 @@ class TransactionDetailScreen extends StatelessWidget {
     final transaction = controller.transactionById(transactionId);
     if (transaction == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Transaction')
-    actions: const [HomeActionButton()],),
+        appBar: AppBar(
+      actions: const [HomeActionButton()],title: const Text('Transaction')),
         body: const Center(
           child: Text('This transaction is no longer available.'),
         ),

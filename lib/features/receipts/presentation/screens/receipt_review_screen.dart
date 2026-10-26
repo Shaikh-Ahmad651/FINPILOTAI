@@ -97,8 +97,8 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Review receipt')
-    actions: const [HomeActionButton()],),
+    appBar: AppBar(
+      actions: const [HomeActionButton()],title: const Text('Review receipt')),
     bottomNavigationBar: SafeArea(
       minimum: const EdgeInsets.fromLTRB(20, 10, 20, 14),
       child: FilledButton(

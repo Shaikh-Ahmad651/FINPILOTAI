@@ -117,8 +117,8 @@ class _ReceiptScanScreenState extends State<ReceiptScanScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Scan receipt')
-    actions: const [HomeActionButton()],),
+    appBar: AppBar(
+      actions: const [HomeActionButton()],title: const Text('Scan receipt')),
     body: ListView(
       padding: const EdgeInsets.all(20),
       children: [

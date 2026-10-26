@@ -130,8 +130,8 @@ class FeaturePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(title)
-    actions: const [HomeActionButton()],),
+    appBar: AppBar(
+      actions: const [HomeActionButton()],title: Text(title)),
     body: SafeArea(
       child: ListView(
         padding: const EdgeInsets.all(20),

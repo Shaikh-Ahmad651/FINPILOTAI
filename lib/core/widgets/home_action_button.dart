@@ -16,7 +16,6 @@ class HomeActionButton extends StatelessWidget {
 
       final navigator = Navigator.of(context);
       navigator.popUntil((route) => route.settings.name == AppRoutes.home);
-
       MainShellState.globalKey.currentState?.setTab(0);
     },
   );
