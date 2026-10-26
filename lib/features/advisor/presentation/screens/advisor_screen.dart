@@ -6,18 +6,21 @@ import '../../../transactions/controllers/finance_controller.dart';
 import '../../domain/advisor_financial_context.dart';
 import '../../domain/advisor_conversation_store.dart';
 import '../../domain/advisor_provider.dart';
+import '../../services/advisor_model_manager.dart';
 
 class AdvisorScreen extends StatefulWidget {
   const AdvisorScreen({
     required this.controller,
     required this.conversationStore,
     this.provider,
+    this.modelManager,
     super.key,
   });
 
   final FinanceController controller;
   final AdvisorProvider? provider;
   final AdvisorConversationStore conversationStore;
+  final AdvisorModelManager? modelManager;
 
   @override
   State<AdvisorScreen> createState() => _AdvisorScreenState();
@@ -26,16 +29,19 @@ class AdvisorScreen extends StatefulWidget {
 class _AdvisorScreenState extends State<AdvisorScreen> {
   final _input = TextEditingController();
   final _scrollController = ScrollController();
+
   late final AdvisorProvider _provider =
       widget.provider ??
       const AdvisorProviderSelector(fallback: DeterministicAdvisorProvider())
           .active;
+
   bool _isResponding = false;
 
   @override
   void initState() {
     super.initState();
     widget.conversationStore.addListener(_conversationChanged);
+    widget.modelManager?.refresh();
   }
 
   void _conversationChanged() {
@@ -52,13 +58,18 @@ class _AdvisorScreenState extends State<AdvisorScreen> {
 
   Future<void> _send([String? suggestedQuestion]) async {
     if (_isResponding || widget.controller.error != null) return;
+
     final question = (suggestedQuestion ?? _input.text).trim();
     if (question.isEmpty) return;
+
     _input.clear();
+
     setState(() {
       _isResponding = true;
     });
+
     widget.conversationStore.add(AdvisorMessage(isUser: true, text: question));
+
     try {
       final context = AdvisorFinancialContextBuilder.build(
         now: widget.controller.now,
@@ -68,19 +79,23 @@ class _AdvisorScreenState extends State<AdvisorScreen> {
         upcomingBills: widget.controller.upcomingBills,
         overdueBills: widget.controller.overdueBills,
       );
+
       final answer = await _provider.answer(question, context);
+
       if (!mounted) return;
+
       widget.conversationStore.add(AdvisorMessage(isUser: false, text: answer));
     } catch (_) {
       if (!mounted) return;
-      setState(() {
-        widget.conversationStore.add(
-          const AdvisorMessage(
-            isUser: false,
-            text: 'I could not create an answer from your saved summaries. Your financial data has not been changed.',
-          ),
-        );
-      });
+
+      widget.conversationStore.add(
+        const AdvisorMessage(
+          isUser: false,
+          text:
+              'I could not create an answer from your saved summaries. '
+              'Your financial data has not been changed.',
+        ),
+      );
     } finally {
       if (mounted) {
         setState(() => _isResponding = false);
@@ -99,6 +114,7 @@ class _AdvisorScreenState extends State<AdvisorScreen> {
   void _scrollToLatest() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_scrollController.hasClients) return;
+
       _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
         duration: const Duration(milliseconds: 220),
@@ -122,11 +138,15 @@ class _AdvisorScreenState extends State<AdvisorScreen> {
       ],
     ),
     body: AnimatedBuilder(
-      animation: widget.controller,
+      animation: Listenable.merge([
+        widget.controller,
+        if (widget.modelManager != null) widget.modelManager!,
+      ]),
       builder: (context, _) {
         if (widget.controller.isLoading) {
           return const Center(child: CircularProgressIndicator());
         }
+
         return Column(
           children: [
             Padding(
@@ -147,8 +167,11 @@ class _AdvisorScreenState extends State<AdvisorScreen> {
                           ),
                           Text(
                             _provider.modelAvailable && _provider.modelEnabled
-                                ? 'On-device model enabled. Financial data stays on this device.'
-                                : 'No language model installed. Answers are deterministic summaries; no financial data leaves this device.',
+                                ? 'On-device model enabled. Financial data '
+                                      'stays on this device.'
+                                : 'No language model installed. Answers '
+                                      'use deterministic summaries; no '
+                                      'financial data leaves this device.',
                             style: const TextStyle(
                               color: AppColors.muted,
                               fontSize: 12,
@@ -161,6 +184,10 @@ class _AdvisorScreenState extends State<AdvisorScreen> {
                 ),
               ),
             ),
+
+            if (widget.modelManager != null)
+              _ModelDownloadCard(manager: widget.modelManager!),
+
             if (widget.controller.error != null)
               Padding(
                 padding: const EdgeInsets.symmetric(
@@ -171,7 +198,8 @@ class _AdvisorScreenState extends State<AdvisorScreen> {
                   child: Column(
                     children: [
                       Text(
-                        'Local finance data could not be loaded: ${widget.controller.error}',
+                        'Local finance data could not be loaded: '
+                        '${widget.controller.error}',
                         style: const TextStyle(color: AppColors.coral),
                       ),
                       TextButton(
@@ -182,6 +210,7 @@ class _AdvisorScreenState extends State<AdvisorScreen> {
                   ),
                 ),
               ),
+
             Expanded(
               child: widget.conversationStore.messages.isEmpty
                   ? _emptyState(context)
@@ -195,12 +224,14 @@ class _AdvisorScreenState extends State<AdvisorScreen> {
                         if (index == widget.conversationStore.messages.length) {
                           return const _TypingIndicator();
                         }
+
                         return _MessageBubble(
                           entry: widget.conversationStore.messages[index],
                         );
                       },
                     ),
             ),
+
             SafeArea(
               top: false,
               child: Padding(
@@ -253,7 +284,9 @@ class _AdvisorScreenState extends State<AdvisorScreen> {
       ),
       const SizedBox(height: 8),
       const Text(
-        'Ask for a summary or a budgeting suggestion. Answers use calculated totals from your saved accounts, transactions, budgets, and unpaid bills. No database changes are made from chat.',
+        'Ask for a summary or a budgeting suggestion. Answers use '
+        'calculated totals from your saved accounts, transactions, '
+        'budgets, and unpaid bills. No database changes are made from chat.',
         textAlign: TextAlign.center,
         style: TextStyle(color: AppColors.muted),
       ),
@@ -273,6 +306,98 @@ class _AdvisorScreenState extends State<AdvisorScreen> {
           : () => _send(text),
       icon: const Icon(Icons.chat_bubble_outline, size: 18),
       label: Text(text),
+    ),
+  );
+}
+
+class _ModelDownloadCard extends StatelessWidget {
+  const _ModelDownloadCard({required this.manager});
+
+  final AdvisorModelManager manager;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+    child: AnimatedBuilder(
+      animation: manager,
+      builder: (context, _) {
+        if (manager.isReady) {
+          return const AppCard(
+            padding: EdgeInsets.all(12),
+            child: Row(
+              children: [
+                Icon(Icons.check_circle, color: AppColors.mint),
+                SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'Gemma 4 E2B is installed and ready on this device.',
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        if (manager.isDownloading) {
+          return AppCard(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Downloading Gemma 4 E2B — '
+                  '${(manager.progress * 100).round()}%',
+                ),
+                const SizedBox(height: 8),
+                LinearProgressIndicator(value: manager.progress),
+                const SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: manager.cancelDownload,
+                    child: const Text('Cancel download'),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return AppCard(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Run Gemma locally',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                'The model is approximately 2.6 GB. Download it only '
+                'when you have enough storage and a reliable connection.',
+                style: TextStyle(color: AppColors.muted, fontSize: 12),
+              ),
+              if (manager.error != null) ...[
+                const SizedBox(height: 8),
+                Text(
+                  manager.error!,
+                  style: const TextStyle(color: AppColors.coral),
+                ),
+              ],
+              const SizedBox(height: 8),
+              Align(
+                alignment: Alignment.centerRight,
+                child: FilledButton.icon(
+                  onPressed: manager.download,
+                  icon: const Icon(Icons.download),
+                  label: const Text('Download model'),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     ),
   );
 }

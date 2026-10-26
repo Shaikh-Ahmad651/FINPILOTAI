@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../../../app/app_theme.dart';
 import '../../../core/widgets/app_card.dart';
-import '../../advisor/presentation/screens/advisor_screen.dart';
 import '../../advisor/domain/advisor_conversation_store.dart';
+import '../../advisor/domain/local_llm_advisor_provider.dart';
+import '../../advisor/presentation/screens/advisor_screen.dart';
+import '../../advisor/services/advisor_model_manager.dart';
 import '../../analysis/presentation/screens/analysis_screen.dart';
 import '../../home/presentation/screens/home_screen.dart';
-import '../../settings/presentation/screens/settings_screen.dart';
 import '../../money/presentation/screens/money_screen.dart';
+import '../../settings/presentation/screens/settings_screen.dart';
 import '../../transactions/controllers/finance_controller.dart';
 
 class MainShell extends StatefulWidget {
@@ -21,23 +23,40 @@ class MainShell extends StatefulWidget {
 
 class MainShellState extends State<MainShell> {
   int _selectedIndex = 0;
+
   final AdvisorConversationStore _advisorConversation =
       AdvisorConversationStore();
+
+  late final AdvisorModelManager _advisorModelManager;
+  late final LocalLlmAdvisorProvider _advisorProvider;
 
   void setTab(int index) => setState(() => _selectedIndex = index);
 
   @override
-  void dispose() {
-    _advisorConversation.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+
+    _advisorModelManager = AdvisorModelManager();
+
+    _advisorProvider = LocalLlmAdvisorProvider(
+      modelManager: _advisorModelManager,
+      isEnabled: () => true,
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      if (widget.controller.isLoading) {
+        widget.controller.load();
+      }
+    });
   }
 
   @override
-  void initState() {
-    super.initState();
-    if (widget.controller.isLoading) {
-      widget.controller.load();
-    }
+  void dispose() {
+    _advisorModelManager.dispose();
+    _advisorConversation.dispose();
+    super.dispose();
   }
 
   @override
@@ -51,6 +70,8 @@ class MainShellState extends State<MainShell> {
         AdvisorScreen(
           controller: widget.controller,
           conversationStore: _advisorConversation,
+          provider: _advisorProvider,
+          modelManager: _advisorModelManager,
         ),
         SettingsScreen(
           controller: widget.controller,

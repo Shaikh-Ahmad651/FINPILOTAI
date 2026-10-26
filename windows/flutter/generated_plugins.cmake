@@ -3,7 +3,9 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  connectivity_plus
   file_selector_windows
+  flutter_edge_ai
   flutter_timezone
   local_auth_windows
   share_plus

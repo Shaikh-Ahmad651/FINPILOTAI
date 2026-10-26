@@ -39,24 +39,30 @@ class DeterministicAdvisorProvider implements AdvisorProvider {
   @override
   bool get modelEnabled => false;
 
+  static const _outOfScopeTerms = [
+    'stock',
+    'share price',
+    'crypto',
+    'invest',
+    'loan',
+    'debt',
+    'credit score',
+    'interest rate',
+    'tax filing',
+    'market price',
+  ];
+
+  /// True for questions this app must decline (investments, loans, tax, etc.).
+  static bool isOutOfScope(String question) =>
+      _containsAny(question.toLowerCase(), _outOfScopeTerms);
+
   @override
   Future<String> answer(
     String question,
     AdvisorFinancialContext context,
   ) async {
     final normalized = question.toLowerCase();
-    if (_containsAny(normalized, [
-      'stock',
-      'share price',
-      'crypto',
-      'invest',
-      'loan',
-      'debt',
-      'credit score',
-      'interest rate',
-      'tax filing',
-      'market price',
-    ])) {
+    if (isOutOfScope(question)) {
       return 'I can’t provide investment, loan, tax, credit-score, or live market advice from this app. This advisor only uses your saved local finance summaries. You can review your recorded budget and cash flow; that is general budgeting guidance, not professional financial advice.';
     }
     final asksPreviousPeriod =
